@@ -2,78 +2,62 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement")]
+    public float moveSpeed;
 
-    public Rigidbody rb;
-    public float forwardForce;
-    public float sidewaysForce;
-    public float backwardForce;
-    public bool moveRight = false;
-    public bool moveLeft = false;
-    public bool moveForward = false;
-    public bool moveBackward = false;
+    public float groundDrag;
 
-    // Update is called once per frame
-    void Update()
+    [Header("Ground Check")]
+    public float playerHeight;
+    public LayerMask whatIsGround;
+    bool grounded;
+
+    public Transform orientation;
+
+    float horizontalInput;
+    float verticalInput;
+    Vector3 moveDirection;
+    Rigidbody rb;
+
+
+    [Header("Jumping")]
+    public float jumpForce = 10f;
+
+    private void Start()
     {
-        if (Input.GetKey("d"))
-        {
-            moveLeft = true;
-        }
-        if (Input.GetKeyUp("d"))
-        {
-            moveLeft = false;
-        }
-        if (Input.GetKey("a"))
-        {
-            moveRight = true;
-        }
-        if (Input.GetKeyUp("a"))
-        {
-            moveRight = false;
-        }
-        if (Input.GetKey("w"))
-        {
-            moveForward = true;
-        }
-        if (Input.GetKeyUp("w"))
-        {
-            moveForward = false;
-        }
-        if (Input.GetKey("s"))
-        {
-            moveBackward = true;
-        }
-        if (Input.GetKeyUp("s"))
-        {
-            moveBackward = false;
-        }
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
     }
 
-    void FixedUpdate() // FixedUpdate is used for physics updates
+    private void Update()
     {
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
 
-        if (moveRight == true) //Look into supporting smoothing, ability to change keybinds, etc.
-        {
-            // Add a right force
-            rb.AddForce(-sidewaysForce * Time.deltaTime, 0, 0, ForceMode.VelocityChange);
-        }
+        MyInput();
 
-        if (moveLeft == true)
-        {
-            // Add a left force
-            rb.AddForce(sidewaysForce * Time.deltaTime, 0, 0, ForceMode.VelocityChange);
-        }
+        if (grounded)
+            rb.linearDamping = groundDrag;
+        else
+            rb.linearDamping = 0;
+    }
 
-        if (moveForward == true)
-        {
-            // Add a forward force
-            rb.AddForce(0, 0, forwardForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        
-        if (moveBackward == true)
-        {
-            // Add a backward force
-            rb.AddForce(0, 0, -backwardForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
+    private void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
+    private void MyInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+    }
+
+    private void MovePlayer()
+    {
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
     }
 }
