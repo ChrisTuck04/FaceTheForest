@@ -6,9 +6,11 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody rb;
     public float forwardForce;
     public float sidewaysForce;
+    public float backwardForce;
     public bool moveRight = false;
     public bool moveLeft = false;
     public bool moveForward = false;
+    public bool moveBackward = false;
 
     // Update is called once per frame
     void Update()
@@ -37,6 +39,14 @@ public class PlayerMovement : MonoBehaviour
         {
             moveForward = false;
         }
+        if (Input.GetKey("s"))
+        {
+            moveBackward = true;
+        }
+        if (Input.GetKeyUp("s"))
+        {
+            moveBackward = false;
+        }
     }
 
     void FixedUpdate() // FixedUpdate is used for physics updates
@@ -53,11 +63,17 @@ public class PlayerMovement : MonoBehaviour
             // Add a left force
             rb.AddForce(sidewaysForce * Time.deltaTime, 0, 0, ForceMode.VelocityChange);
         }
-        
+
         if (moveForward == true)
         {
             // Add a forward force
             rb.AddForce(0, 0, forwardForce * Time.deltaTime, ForceMode.VelocityChange);
+        }
+        
+        if (moveBackward == true)
+        {
+            // Add a backward force
+            rb.AddForce(0, 0, -backwardForce * Time.deltaTime, ForceMode.VelocityChange);
         }
     }
 }

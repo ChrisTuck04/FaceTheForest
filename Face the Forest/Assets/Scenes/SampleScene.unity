@@ -238,7 +238,6 @@ GameObject:
   - component: {fileID: 242748660}
   - component: {fileID: 242748659}
   - component: {fileID: 242748658}
-  - component: {fileID: 242748657}
   - component: {fileID: 242748656}
   - component: {fileID: 242748661}
   m_Layer: 0
@@ -275,27 +274,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &242748657
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242748655}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &242748658
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -348,7 +326,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242748655}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &242748660
 Transform:
   m_ObjectHideFlags: 0
@@ -357,13 +335,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242748655}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!114 &242748661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,10 +355,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 242748656}
-  forwardForce: 1000
+  forwardForce: 50
   sidewaysForce: 40
+  backwardForce: 40
   moveRight: 0
   moveLeft: 0
+  moveForward: 0
+  moveBackward: 0
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +513,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 242748660}
-  offset: {x: 0, y: 2, z: -6}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
