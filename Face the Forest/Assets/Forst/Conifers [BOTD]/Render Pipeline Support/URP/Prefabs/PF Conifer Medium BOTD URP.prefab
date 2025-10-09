@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4071390273635838}
   - component: {fileID: 205829865164112152}
-  - component: {fileID: -6223155937790948185}
+  - component: {fileID: 4233458734143161849}
   m_Layer: 0
   m_Name: PF Conifer Medium BOTD URP
   m_TagString: Untagged
@@ -63,7 +63,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 227131698251642430}
   m_Enabled: 1
---- !u!65 &-6223155937790948185
+--- !u!65 &4233458734143161849
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,7 +82,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 100, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1487772876627174
 GameObject:
