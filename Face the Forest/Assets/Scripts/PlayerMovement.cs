@@ -4,9 +4,15 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-    public float sprintMultiplier = 1.5f;
+    public float sprintMultiplier = 2.0f;
 
     public float groundDrag;
+
+    [Header("Stamina")]
+    public float maxStamina = 100f;
+    public float currentStamina;
+    public float staminaDrainRate = 30f;
+    public float staminaRegenRate = 15f;
 
     [Header("Jumping")]
     public float jumpForce;
@@ -29,11 +35,13 @@ public class PlayerMovement : MonoBehaviour
     float verticalInput;
     Vector3 moveDirection;
     Rigidbody rb;
+    bool isSprinting;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        currentStamina = maxStamina;
     }
 
     private void Update()
@@ -42,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
         MyInput();
         SpeedControl();
+        HandleStamina();
 
         if (grounded)
             rb.linearDamping = groundDrag;
@@ -69,11 +78,33 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void HandleStamina()
+    {
+        bool isMoving = horizontalInput != 0 || verticalInput != 0;
+        bool wantsToSprint = Input.GetKey(sprintKey);
+
+        if (wantsToSprint && isMoving && currentStamina > 0)
+        {
+            isSprinting = true;
+            currentStamina -= staminaDrainRate * Time.deltaTime;
+            currentStamina = Mathf.Max(currentStamina, 0);
+        }
+        else
+        {
+            isSprinting = false;
+            if (currentStamina < maxStamina)
+            {
+                currentStamina += staminaRegenRate * Time.deltaTime;
+                currentStamina = Mathf.Min(currentStamina, maxStamina);
+            }
+        }
+    }
+
     private void MovePlayer()
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        float currentSpeed = Input.GetKey(sprintKey) ? moveSpeed * sprintMultiplier : moveSpeed;
+        float currentSpeed = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
 
         if (grounded)
             rb.AddForce(moveDirection.normalized * currentSpeed * 10f, ForceMode.Force);
@@ -85,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        float maxSpeed = Input.GetKey(sprintKey) ? moveSpeed * sprintMultiplier : moveSpeed;
+        float maxSpeed = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
 
         if (flatVel.magnitude > maxSpeed)
         {
