@@ -3,7 +3,7 @@ using UnityEngine;
 public class FollowPlayer : MonoBehaviour
 {
     public Transform cameraPosition; // Reference to the player's transform
-
+    private bool isCrouching = false; // Flag to check if the player is crouching
     // Update is called once per frame
     void Update()
     {
