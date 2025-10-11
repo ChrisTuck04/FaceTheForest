@@ -10,7 +10,7 @@ public class SetTerrainObstacles : MonoBehaviour
     Terrain terrain;
     float width;
     float length; 
-    float hight;
+    float height;
     bool isError;
     void Start()
     {
@@ -19,8 +19,8 @@ public class SetTerrainObstacles : MonoBehaviour
 
         length = terrain.terrainData.size.z;
         width = terrain.terrainData.size.x;
-        hight = terrain.terrainData.size.y;
-        Debug.Log("Terrain Size is :" + width + " , " + hight + " , " + length);
+        height = terrain.terrainData.size.y;
+        Debug.Log("Terrain Size is :" + width + " , " + height + " , " + length);
 
         int i = 0;
         GameObject parent = new GameObject("Tree_Obstacles");
@@ -28,7 +28,7 @@ public class SetTerrainObstacles : MonoBehaviour
         Debug.Log("Adding "+Obstacle.Length+" navMeshObstacle Components for Trees");
         foreach (TreeInstance tree in Obstacle)
         {
-            Vector3 tempPos = new Vector3(tree.position.x * width, tree.position.y * hight, tree.position.z * length);
+            Vector3 tempPos = new Vector3(tree.position.x * width, tree.position.y * height, tree.position.z * length);
             Quaternion tempRot = Quaternion.AngleAxis(tree.rotation * Mathf.Rad2Deg, Vector3.up);
 
             GameObject obs = new GameObject("Obstacle" + i);
