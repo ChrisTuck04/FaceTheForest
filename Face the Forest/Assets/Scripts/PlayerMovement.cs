@@ -36,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
     Rigidbody rb;
     bool isSprinting;
+    bool isCrouching;
+    public FollowPlayer cameraScript; 
+    public HidePlayer hidePlayerScript;
 
     private void Start()
     {
@@ -75,6 +78,22 @@ public class PlayerMovement : MonoBehaviour
             Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown);
+        }
+
+        if (Input.GetKeyDown(crouchKey) && grounded)
+        {
+            isCrouching = !isCrouching;
+            cameraScript.SetCrouching();
+            hidePlayerScript.SetCrouching();
+
+            if (isCrouching)
+            {
+                moveSpeed /= 2;
+            }
+            else
+            {
+                moveSpeed *= 2;
+            }
         }
     }
 
