@@ -10,7 +10,6 @@ public class FollowPlayer : MonoBehaviour
         Vector3 offset = new Vector3(0, 0, 0);
         if (isCrouching)
         {
-            Debug.Log("Crouch key pressed FP - U");
             offset.y -= 0.5f; // Adjust the offset value as needed
         }
 
@@ -19,7 +18,6 @@ public class FollowPlayer : MonoBehaviour
 
     public void SetCrouching()
     {
-        Debug.Log("Crouch key pressed FP - SC");
         isCrouching = !isCrouching;
     }
 }
