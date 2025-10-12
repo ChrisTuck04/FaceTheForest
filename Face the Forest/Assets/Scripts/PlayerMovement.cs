@@ -40,12 +40,20 @@ public class PlayerMovement : MonoBehaviour
     bool isCrouching;
     public FollowPlayer cameraScript; 
     public HidePlayer hidePlayerScript;
+    
+    [Header("Audio")]
+    public PlayerAudio playerAudio;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         currentStamina = maxStamina;
+        
+        if (playerAudio == null)
+        {
+            playerAudio = GetComponent<PlayerAudio>();
+        }
     }
 
     private void Update()
@@ -55,6 +63,13 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         SpeedControl();
         HandleStamina();
+        
+        if (playerAudio != null)
+        {
+            bool isMoving = horizontalInput != 0 || verticalInput != 0;
+            playerAudio.PlayFootsteps(isMoving, isSprinting, grounded, isCrouching);
+            playerAudio.CheckLanding(grounded);
+        }
 
         if (grounded)
             rb.linearDamping = groundDrag;
@@ -150,6 +165,11 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        
+        if (playerAudio != null)
+        {
+            playerAudio.PlayJumpSound();
+        }
     }
 
     private void ResetJump()
