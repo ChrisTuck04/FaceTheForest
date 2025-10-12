@@ -10,7 +10,6 @@ public static class TreeObstaclePlacer
     private const string ObstacleLayerName = "NavMeshObstacle";
     private const string NotWalkableAreaName = "Not Walkable"; // Define the area name constant
 
-    [MenuItem("Tools/NavMesh/Place Static Tree Obstacles")]
     public static void PlaceAndBakeObstacles()
     {
         Terrain terrain = Terrain.activeTerrain;
