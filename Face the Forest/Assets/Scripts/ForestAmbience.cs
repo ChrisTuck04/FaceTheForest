@@ -4,10 +4,9 @@ public class ForestAmbience : MonoBehaviour
 {
     [Header("Ambience Layers")]
     [SerializeField] private AudioClip[] ambienceClips;
+    [SerializeField] private float[] clipVolumes = { 1f, 0.3f }; // Night loop at 1.0, backdrop at 0.3
     
     [Header("Settings")]
-    [SerializeField] private float baseVolume = 0.4f;
-    [SerializeField] private float volumeVariation = 0.1f;
     [SerializeField] private float minDelay = 2f;
     [SerializeField] private float maxDelay = 8f;
     
@@ -27,6 +26,7 @@ public class ForestAmbience : MonoBehaviour
             Resources.Load<AudioClip>("Audio/Ambience/Environment/Nature/Ambiance_Night_Loop_Stereo"),
             Resources.Load<AudioClip>("Audio/Ambience/Backdrop/backdrop")
         };
+        Debug.Log($"Loaded {ambienceClips.Length} ambience clips");
     }
     
     private void SetupAudioSources()
@@ -40,7 +40,7 @@ public class ForestAmbience : MonoBehaviour
             audioSources[i].loop = true;
             audioSources[i].playOnAwake = false;
             audioSources[i].spatialBlend = 0f;
-            audioSources[i].volume = baseVolume + Random.Range(-volumeVariation, volumeVariation);
+            audioSources[i].volume = clipVolumes[i];
         }
     }
     
