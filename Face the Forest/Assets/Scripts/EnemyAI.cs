@@ -1,30 +1,67 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; // Make sure this is included
+using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
     public Transform target;
-    private NavMeshAgent agent;
+    public List<Transform> destinations;
+    //public Animator anim;
+    public float walkSpeed, chaseSpeed, minIdleTime, maxIdleTime, idleTime;
+    public bool walking, chasing;
+    public Transform player;
+    Transform currentDest;
+    Vector3 dest;
+    int randDest, randDecision;
+    public int destinationAmount;
+    public NavMeshAgent agent;
 
     void Start()
     {
+        walking = true;
+        randDest = Random.Range(0, destinationAmount);
+        currentDest = destinations[randDest];
         agent = GetComponent<NavMeshAgent>();
     }
 
     void Update()
     {
-        if (target != null)
+        if (walking == true)
         {
-            // Create a NavMeshHit object to store the result of our search
-            NavMeshHit hit;
-
-            // Search for the closest point on the NavMesh to the target's position
-            // It will search within a 1.0f radius (you can increase this if needed)
-            if (NavMesh.SamplePosition(target.position, out hit, 1.0f, NavMesh.AllAreas))
+            dest = currentDest.position;
+            agent.destination = dest;
+            agent.speed = walkSpeed;
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
-                // If a valid point was found, set that as the new destination
-                agent.SetDestination(hit.position);
+                randDecision = Random.Range(0, 2);
+                if (randDecision == 0)
+                {
+                    randDest = Random.Range(0, destinationAmount);
+                    currentDest = destinations[randDest];
+                }
+                if (randDecision == 1)
+                {
+                    //anim.ResetTrigger("walk");
+                    //anim.SetTrigger("idle");
+                    StopCoroutine("stayIdle");
+                    StartCoroutine("stayIdle");
+                    walking = false;
+                }
+
+                walking = false;
+                Invoke("SetWalkingTrue", idleTime);
             }
         }
+    }
+    IEnumerator stayIdle()
+    {
+        idleTime = Random.Range(minIdleTime, maxIdleTime);
+        yield return new WaitForSeconds(idleTime);
+        walking = true;
+        randDest = Random.Range(0, destinationAmount);
+        currentDest = destinations[randDest];
+        //anim.ResetTrigger("idle");
+        //anim.SetTrigger("walk");
     }
 }
