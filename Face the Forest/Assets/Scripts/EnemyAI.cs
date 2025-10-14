@@ -34,7 +34,7 @@ public class EnemyAI : MonoBehaviour
         Debug.Log("4. ENEMY SCRIPT STARTING. TimeScale on load is: " + Time.timeScale);
         agent = GetComponent<NavMeshAgent>();
 
-        counter = 0;
+        counter = 1;
         randDest = Random.Range(0, destinations.Count);
         currentDest = destinations[randDest];
 
