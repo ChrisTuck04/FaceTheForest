@@ -6,13 +6,14 @@ using UnityEngine.UI;
 public class SprintHud : MonoBehaviour
 {
 
+    public Image staminaBar;
     public Image staminaBackground;
     public GameObject Player;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Init stamina bar to default values
-        staminaUI.fillAmount = 1f;
+        staminaBar.fillAmount = 1f;
 
         // Find our Player
         Player = GameObject.Find("Player");
@@ -22,16 +23,16 @@ public class SprintHud : MonoBehaviour
     void Update()
     {
         // update how much stamina we have
-        staminaUI.fillAmount = Player.GetComponent<PlayerMovement>().currentStamina / Player.GetComponent<PlayerMovement>().maxStamina;
-        if(staminaUI.fillAmount < 1f)
+        staminaBar.fillAmount = Player.GetComponent<PlayerMovement>().currentStamina / Player.GetComponent<PlayerMovement>().maxStamina;
+        if(staminaBar.fillAmount < 1f)
         {
             // TODO: Make a nicer looking fade
-            staminaUI.enabled = true;
+            staminaBar.enabled = true;
             staminaBackground.enabled = true;
         }
         else
         {
-            staminaUI.enabled = false;
+            staminaBar.enabled = false;
             staminaBackground.enabled = false;
         }
     }
