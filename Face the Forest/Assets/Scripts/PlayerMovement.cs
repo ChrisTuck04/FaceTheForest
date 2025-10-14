@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
+    public Transform groundCheck;
     bool readyToJump = true;
 
     [Header("Keybinds")]
@@ -38,9 +39,9 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
     bool isSprinting;
     bool isCrouching;
-    public FollowPlayer cameraScript; 
-    public HidePlayer hidePlayerScript;
-    
+    public FollowPlayer cameraScript;
+    GameManager gameManagerScript;
+
     [Header("Audio")]
     public PlayerAudio playerAudio;
 
@@ -49,7 +50,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         currentStamina = maxStamina;
-        
+        gameManagerScript = GameManager.instance;
+
         if (playerAudio == null)
         {
             playerAudio = GetComponent<PlayerAudio>();
@@ -58,12 +60,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        grounded = Physics.CheckSphere(groundCheck.position, 0.2f, whatIsGround);
 
         MyInput();
         SpeedControl();
         HandleStamina();
-        
+
         if (playerAudio != null)
         {
             bool isMoving = horizontalInput != 0 || verticalInput != 0;
@@ -86,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        
+
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
@@ -100,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isCrouching = !isCrouching;
             cameraScript.SetCrouching();
-            hidePlayerScript.SetCrouching();
+            gameManagerScript.SetCrouching();
 
             if (isCrouching)
             {
@@ -118,7 +120,7 @@ public class PlayerMovement : MonoBehaviour
         bool isMoving = horizontalInput != 0 || verticalInput != 0;
         bool wantsToSprint = Input.GetKey(sprintKey);
 
-        if (wantsToSprint && isMoving && currentStamina > 0)
+        if (wantsToSprint && isMoving && currentStamina > 0 && !isCrouching)
         {
             isSprinting = true;
             currentStamina -= staminaDrainRate * Time.deltaTime;
@@ -143,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (grounded)
             rb.AddForce(moveDirection.normalized * currentSpeed * 10f, ForceMode.Force);
-        else if(!grounded)
+        else if (!grounded)
             rb.AddForce(moveDirection.normalized * currentSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
@@ -165,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-        
+
         if (playerAudio != null)
         {
             playerAudio.PlayJumpSound();
@@ -175,5 +177,12 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         readyToJump = true;
+    }
+    
+    public void Die()
+    {
+        this.enabled = false;
+        
+        rb.isKinematic = true;
     }
 }
