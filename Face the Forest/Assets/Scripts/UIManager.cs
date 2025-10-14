@@ -5,7 +5,8 @@ using System.Collections;
 public class UIManager : MonoBehaviour
 {
     public GameObject deathScreenUI;
-    public GameObject tutorialUI;
+    public GameObject tutorialUIOne;
+    public GameObject tutorialUITwo;
 
     private void Start()
     {
@@ -31,13 +32,18 @@ public class UIManager : MonoBehaviour
 
     IEnumerator ShowTutorialCoroutine()
     {
-        if (tutorialUI != null)
+        if (tutorialUIOne != null && tutorialUITwo != null)
         {
-            tutorialUI.SetActive(true);
+            tutorialUIOne.SetActive(true);
 
             yield return new WaitForSeconds(15f);
 
-            tutorialUI.SetActive(false);
+            tutorialUIOne.SetActive(false);
+            tutorialUITwo.SetActive(true);
+
+            yield return new WaitForSeconds(15f);
+            
+            tutorialUITwo.SetActive(false);
         }
     }
 }

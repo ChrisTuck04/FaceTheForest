@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     public void PlayerEnterHiding()
     {
         playerInHidingSpot = true;
-        pmScript.moveSpeed -= hinderance;
+        pmScript.moveSpeed = hinderance;
         CheckHiding();
     }
 

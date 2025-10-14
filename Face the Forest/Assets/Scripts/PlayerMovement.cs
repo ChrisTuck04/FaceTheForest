@@ -4,6 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    float walkSpeed, crouchSpeed, sprintSpeed;
     public float sprintMultiplier = 2.0f;
 
     public float groundDrag;
@@ -47,6 +48,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        walkSpeed = moveSpeed;
+        crouchSpeed = moveSpeed / 2;
+        sprintSpeed = moveSpeed * sprintMultiplier;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         currentStamina = maxStamina;
@@ -106,11 +110,11 @@ public class PlayerMovement : MonoBehaviour
 
             if (isCrouching)
             {
-                moveSpeed /= 2;
+                moveSpeed = crouchSpeed;
             }
             else
             {
-                moveSpeed *= 2;
+                moveSpeed = walkSpeed;
             }
         }
     }
@@ -153,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        float maxSpeed = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
+        float maxSpeed = isSprinting ? sprintSpeed : moveSpeed;
 
         if (flatVel.magnitude > maxSpeed)
         {
@@ -178,11 +182,19 @@ public class PlayerMovement : MonoBehaviour
     {
         readyToJump = true;
     }
-    
+
     public void Die()
     {
         this.enabled = false;
-        
+
         rb.isKinematic = true;
+    }
+
+    public void HinderedCheck(bool hindered)
+    {
+        if (hindered)
+        {
+            moveSpeed = isCrouching ? crouchSpeed - 2 : isSprinting ? sprintSpeed - 2 : walkSpeed - 2; //lol
+        }
     }
 }

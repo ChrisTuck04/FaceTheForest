@@ -153,7 +153,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a24533493f6044d94b0427c9a31cd0aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterTransform: {fileID: 0}
-  loseDistance: 5
-  hinderance: 2
   pmScript: {fileID: 0}

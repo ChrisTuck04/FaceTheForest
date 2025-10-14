@@ -14,7 +14,7 @@ public class HidePlayer : MonoBehaviour
         gameManager = GameManager.instance;
         if (pmScript == null)
         {
-            pmScript = GetComponent<PlayerMovement>();
+            pmScript = FindFirstObjectByType<PlayerMovement>();
         }
     }
 

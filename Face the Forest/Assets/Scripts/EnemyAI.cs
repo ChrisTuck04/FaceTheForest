@@ -171,7 +171,6 @@ public class EnemyAI : MonoBehaviour
             Debug.Log("StayIdle: RESULT = HUNTING");
             counter = 0;
             Debug.Log("Hunting player! Counter: " + counter);
-            //! CHASE PLAYER HERE
             hunting = true;
         }
     }
