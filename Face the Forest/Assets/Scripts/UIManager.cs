@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public GameObject deathScreenUI;
     public GameObject tutorialUIOne;
     public GameObject tutorialUITwo;
+    public GameObject tutorialUIThree;
 
     private void Start()
     {
@@ -36,14 +37,19 @@ public class UIManager : MonoBehaviour
         {
             tutorialUIOne.SetActive(true);
 
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(5f);
 
             tutorialUIOne.SetActive(false);
             tutorialUITwo.SetActive(true);
 
-            yield return new WaitForSeconds(15f);
-            
+            yield return new WaitForSeconds(7f);
+
             tutorialUITwo.SetActive(false);
+            tutorialUIThree.SetActive(true);
+
+            yield return new WaitForSeconds(5f);
+
+            tutorialUIThree.SetActive(false);
         }
     }
 }

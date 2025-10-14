@@ -140,6 +140,7 @@ public class EnemyAI : MonoBehaviour
                 currentDest = destinations[randDest];
                 dest = currentDest.position;
                 agent.destination = dest;
+                agent.speed = walkSpeed;
                 walking = true;
             }
             else if (walking)
