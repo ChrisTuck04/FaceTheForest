@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    bool hindered = false;
     [Header("Movement")]
     public float moveSpeed;
     float walkSpeed, crouchSpeed, sprintSpeed;
@@ -107,15 +108,7 @@ public class PlayerMovement : MonoBehaviour
             isCrouching = !isCrouching;
             cameraScript.SetCrouching();
             gameManagerScript.SetCrouching();
-
-            if (isCrouching)
-            {
-                moveSpeed = crouchSpeed;
-            }
-            else
-            {
-                moveSpeed = walkSpeed;
-            }
+            MovementHandling();
         }
     }
 
@@ -190,11 +183,20 @@ public class PlayerMovement : MonoBehaviour
         rb.isKinematic = true;
     }
 
-    public void HinderedCheck(bool hindered)
+    public void FlipHindered()
+    {
+        hindered = !hindered;
+    }
+
+    public void MovementHandling()
     {
         if (hindered)
         {
-            moveSpeed = isCrouching ? crouchSpeed - 2 : isSprinting ? sprintSpeed - 2 : walkSpeed - 2; //lol
+            moveSpeed = isCrouching ? crouchSpeed - 2 : isSprinting ? sprintSpeed - 2 : walkSpeed - 2;
+        }
+        else
+        {
+            moveSpeed = isCrouching ? crouchSpeed : isSprinting ? sprintSpeed : walkSpeed;
         }
     }
 }
