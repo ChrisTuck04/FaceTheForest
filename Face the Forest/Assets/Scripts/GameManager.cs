@@ -3,7 +3,6 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public int hinderance = 2; // Amount to reduce player speed when in hiding spot
     public bool hiding = false;
     bool playerInHidingSpot = false;
     bool isCrouching = false;
@@ -14,6 +13,7 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -29,21 +29,23 @@ public class GameManager : MonoBehaviour
     public void PlayerEnterHiding()
     {
         playerInHidingSpot = true;
-        pmScript.moveSpeed = hinderance;
+        pmScript.FlipHindered();
+        pmScript.MovementHandling();
         CheckHiding();
     }
 
     public void PlayerExitHiding()
     {
         playerInHidingSpot = false;
-        pmScript.moveSpeed += hinderance;
+        pmScript.FlipHindered();
+        pmScript.MovementHandling();
         CheckHiding();
     }
     
     public void SetCrouching()
     {
         isCrouching = !isCrouching;
-
+        pmScript.MovementHandling();
         CheckHiding(); // Check if the player is in a hiding spot when crouching state changes
     }
 
