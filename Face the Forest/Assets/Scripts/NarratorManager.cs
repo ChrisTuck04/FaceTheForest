@@ -56,12 +56,14 @@ public class NarratorManager : MonoBehaviour
         //resets chasing spoken flag, chase has ended, will speak again
         if (!enemyScript.chasing && fearSpoken)
         {
+            Debug.Log("Resetting fear spoken flag.");
             fearSpoken = false;
         }
 
         //enemy has started chasing the player
         if (enemyScript.chasing && !fearSpoken && !audioSource.isPlaying)
         {
+            Debug.Log("Enemy chasing player, starting chase sequence.");
             fearSpoken = true;
             StartCoroutine(ChaseSequence());
         }
@@ -80,6 +82,7 @@ public class NarratorManager : MonoBehaviour
         //behind player warning chance
         if (isBehind && Random.value < warningChance)
         {
+            Debug.Log("Rand1");
             PlayClip(monsterBehind);
 
             float waitTime = delayAfterWarning;
@@ -92,6 +95,7 @@ public class NarratorManager : MonoBehaviour
         }
         else if (!isBehind && Random.value < warningChance)
         {
+            Debug.Log("Rand2");
             PlayClip(panicRun);
 
             float waitTime = delayAfterWarning;
@@ -102,7 +106,6 @@ public class NarratorManager : MonoBehaviour
 
             yield return new WaitForSeconds(waitTime);
         }
-
         //direction guidance, panic
         PlayDirectionalGuidance(isPanic: true);
     }
@@ -112,9 +115,10 @@ public class NarratorManager : MonoBehaviour
         //random normal guidance
         if (Random.value > calmSpeakChance)
         {
+            Debug.Log("Deciding not to speak calmly.");
             return;
         }
-
+        Debug.Log("Deciding calm guidance.");
         //direction guidance, calm
         PlayDirectionalGuidance(isPanic: false);
     }
@@ -137,6 +141,7 @@ public class NarratorManager : MonoBehaviour
 
     void PlayDirectionalGuidance(bool isPanic)
     {
+        Debug.Log("Deciding guidance direction. Panic: " + isPanic);
         NavMesh.CalculatePath(player.position, exitGoal.position, NavMesh.AllAreas, path);
         if (path.corners.Length < 2) return;
 
@@ -146,20 +151,24 @@ public class NarratorManager : MonoBehaviour
 
         if (Random.value > 0.5f && !isPanic)
         {
+            Debug.Log("Choosing to give general calm guidance.");
             PlayClip(calmGeneral);
             return;
         }
 
         if (angle < -25) //left
         {
+            Debug.Log("Choosing left guidance.");
             PlayClip(isPanic ? panicGoLeft : calmGoLeft);
         }
         else if (angle > 25) //right
         {
+            Debug.Log("Choosing right guidance.");
             PlayClip(isPanic ? panicGoRight : calmGoRight);
         }
         else //forward
         {
+            Debug.Log("Choosing forward guidance.");
             PlayClip(isPanic ? panicGoForward : calmGoForward);
         }
     }
