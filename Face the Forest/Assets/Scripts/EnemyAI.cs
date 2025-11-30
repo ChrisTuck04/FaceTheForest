@@ -5,7 +5,8 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-
+    public GameManager gameManagerScript;
+    
     public Transform target;
     public List<Transform> destinations;
     //public Animator anim;
@@ -19,9 +20,6 @@ public class EnemyAI : MonoBehaviour
     int randDest, counter;
     public NavMeshAgent agent;
 
-    public GameManager gameManagerScript;
-    public UIManager uiManager;
-
     [Header("AI Vision")]
     public float viewRadius;
     [Range(0, 360)]
@@ -29,8 +27,15 @@ public class EnemyAI : MonoBehaviour
     public LayerMask playerMask;
     public LayerMask obstacleMask;
 
+    private UIManager uiManager;
+    private UIManagerMain uiManagerMain;
     void Start()
     {
+        uiManager = FindFirstObjectByType<UIManager>();
+        uiManagerMain = FindFirstObjectByType<UIManagerMain>();
+
+        gameManagerScript = GameManager.instance;
+
         Debug.Log("4. ENEMY SCRIPT STARTING. TimeScale on load is: " + Time.timeScale);
         agent = GetComponent<NavMeshAgent>();
 
@@ -50,7 +55,15 @@ public class EnemyAI : MonoBehaviour
         // Player caught, death
         if (distance <= catchDistance)
         {
-            uiManager.ShowDeathScreen();
+            if (uiManager != null)
+            {
+                uiManager.ShowDeathScreen();
+            }
+
+            if (uiManagerMain != null)
+            {
+                uiManagerMain.ShowDeathScreen();
+            }
             //anim.ResetTrigger("walk");
             //anim.ResetTrigger("idle");
             //anim.ResetTrigger("sprint");
