@@ -196,7 +196,7 @@ public class EnemyAI : MonoBehaviour
         float speed = agent.velocity.magnitude; 
         anim.SetFloat("Speed", speed); 
 
-        float distance = Vector3.Distance(player.position, agent.transform.position);
+        //float distance = Vector3.Distance(player.position, agent.transform.position);
         if (chasing && distance <= attackDistance && Time.time > lastAttackTime + attackCooldown)
         {
             agent.isStopped = true;
