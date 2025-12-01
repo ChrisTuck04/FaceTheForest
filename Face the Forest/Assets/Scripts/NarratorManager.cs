@@ -33,6 +33,11 @@ public class NarratorManager : MonoBehaviour
     public AudioClip[] panicRun;
     public AudioClip[] monsterBehind;
 
+    [Header("Audio Clips - Tutorial Event")]
+    public AudioClip[] tutorialIntros;       // "Watch out! The trees are moving!"
+    public AudioClip[] tutorialTrapReaction; // "Wait! The path... it moved!", "We are trapped."
+    public AudioClip[] tutorialPathClear;    // "Okay, it's clear now. Move quickly."
+
     UnityEngine.AI.NavMeshPath path;
     float calmTimer;
     float naturalTimer;
@@ -46,6 +51,8 @@ public class NarratorManager : MonoBehaviour
 
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.spatialBlend = 0;
+
+        PlayClip(tutorialIntros);
     }
 
     void Update()
@@ -142,49 +149,77 @@ public class NarratorManager : MonoBehaviour
     void PlayDirectionalGuidance(bool isPanic)
     {
         Debug.Log("Deciding guidance direction. Panic: " + isPanic);
-        NavMesh.CalculatePath(player.position, exitGoal.position, NavMesh.AllAreas, path);
+
+        // 1. SANITIZE THE POINTS
+        // Find the closest point on the NavMesh to the player (within 2.0f units)
+        NavMeshHit playerHit;
+        if (!NavMesh.SamplePosition(player.position, out playerHit, 2.0f, NavMesh.AllAreas))
+        {
+            Debug.LogError("Narrator Error: Player is not on the NavMesh!");
+            return;
+        }
+
+        // Find the closest point on the NavMesh to the Exit (within 2.0f units)
+        NavMeshHit exitHit;
+        if (!NavMesh.SamplePosition(exitGoal.position, out exitHit, 5.0f, NavMesh.AllAreas))
+        {
+            Debug.LogError("Narrator Error: Exit Goal is too far from the NavMesh!");
+            return;
+        }
+
+        // 2. CALCULATE PATH USING THE SNAPPED POINTS
+        NavMesh.CalculatePath(playerHit.position, exitHit.position, NavMesh.AllAreas, path);
+
+        // Debug Status
+        Debug.Log($"Path Status: {path.status}, Corners: {path.corners.Length}"); 
+
         if (path.corners.Length < 2) return;
 
-        //find direction to go
+        // 3. DETERMINE DIRECTION
         Vector3 desiredDirection = (path.corners[1] - player.position).normalized;
         float angle = Vector3.SignedAngle(player.forward, desiredDirection, Vector3.up);
 
+        // ... (Rest of your audio selection logic remains the same) ...
+        
         if (Random.value > 0.5f && !isPanic)
         {
-            Debug.Log("Choosing to give general calm guidance.");
             PlayClip(calmGeneral);
             return;
         }
 
-        if (angle < -25) //left
-        {
-            Debug.Log("Choosing left guidance.");
-            PlayClip(isPanic ? panicGoLeft : calmGoLeft);
-        }
-        else if (angle > 25) //right
-        {
-            Debug.Log("Choosing right guidance.");
-            PlayClip(isPanic ? panicGoRight : calmGoRight);
-        }
-        else //forward
-        {
-            Debug.Log("Choosing forward guidance.");
-            PlayClip(isPanic ? panicGoForward : calmGoForward);
-        }
+        if (angle < -25) PlayClip(isPanic ? panicGoLeft : calmGoLeft);
+        else if (angle > 25) PlayClip(isPanic ? panicGoRight : calmGoRight);
+        else PlayClip(isPanic ? panicGoForward : calmGoForward);
     }
-    
+
     public void SilenceNarrator()
     {
         // 1. Stop the logic loop so no new lines are generated
         StopAllCoroutines();
-        
+
         // 2. Immediately cut off whatever is currently playing
         if (audioSource.isPlaying)
         {
             audioSource.Stop();
         }
-        
+
         // 3. Optional: Disable this script so Update() stops running
-        this.enabled = false; 
+        this.enabled = false;
+    }
+
+    public void PlayTutorialTrap()
+    {
+        // Interrupt any current casual chatter immediately
+        SilenceNarrator();
+        this.enabled = true; // Re-enable if Silence disabled it
+        PlayClip(tutorialTrapReaction);
+        calmTimer = talkInterval + Random.Range(-2f, 2f);
+    }
+
+    // CALLED BY: TutorialMazeTrigger.cs (Phase 2: Trees Lower)
+    public void PlayTutorialClear()
+    {
+        if (enemyScript.chasing) return; // Priority check
+        PlayClip(tutorialPathClear);
     }
 }

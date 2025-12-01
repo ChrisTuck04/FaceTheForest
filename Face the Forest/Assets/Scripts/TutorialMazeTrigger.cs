@@ -11,7 +11,7 @@ public class TutorialMazeTrigger : MonoBehaviour
     [Tooltip("How long the path stays blocked (in seconds) before opening again.")]
     public float blockDuration = 5f;
     private bool hasTriggered = false;
-    // public NarratorManager narrator; 
+    public NarratorManager narrator; 
 
     void OnTriggerEnter(Collider other)
     {
@@ -26,44 +26,32 @@ public class TutorialMazeTrigger : MonoBehaviour
 
     IEnumerator TimedMazeEvent()
     {
-        // ---------------------------------------------------------
-        // PHASE 1: BLOCK THE PATH (Trees Rise)
-        // ---------------------------------------------------------
+        // ... inside TimedMazeEvent Coroutine ...
+
+        // PHASE 1: BLOCK
         foreach (MazeGate gate in gatesToControl)
         {
-            if (gate != null) gate.SetGateState(true); // true = Block/Rise
+            if (gate != null) gate.SetGateState(true);
         }
 
-        // --- NARRATOR: REACTION TO TRAP ---
-        /*
-        if (narrator != null) 
+        // --- UPDATED NARRATOR CALL ---
+        if (narrator != null)
         {
-            e.g. "Wait! The path... it moved!" or "We are trapped."
-            narrator.PlaySpecificClip(narrator.trapReactionClip);
+            narrator.PlayTutorialTrap(); // <--- NEW CALL
         }
-        */
 
-        // Wait for the duration (allows player to panic/look at trees)
         yield return new WaitForSeconds(blockDuration);
 
-
-        // ---------------------------------------------------------
-        // PHASE 2: OPEN THE PATH (Trees Lower)
-        // ---------------------------------------------------------
+        // PHASE 2: OPEN
         foreach (MazeGate gate in gatesToControl)
         {
-            if (gate != null) gate.SetGateState(false); // false = Open/Lower
+            if (gate != null) gate.SetGateState(false);
         }
 
-        Debug.Log("Tutorial Event Ended: Path Re-opened.");
-
-        // --- NARRATOR: REACTION TO OPENING ---
-        /*
-        if (narrator != null) 
+        // --- UPDATED NARRATOR CALL ---
+        if (narrator != null)
         {
-            e.g. "Okay, it's clear now. Move quickly."
-            narrator.PlaySpecificClip(narrator.pathClearClip);
+            narrator.PlayTutorialClear(); // <--- NEW CALL
         }
-        */
     }
 }
