@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class NarratorManager : MonoBehaviour
+public class NarratorMain : MonoBehaviour
 {
     [Header("References")]
     public Transform player;

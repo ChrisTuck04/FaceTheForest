@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class EnemyAI : MonoBehaviour
 {
     public GameManager gameManagerScript;
@@ -19,6 +20,7 @@ public class EnemyAI : MonoBehaviour
     Vector3 dest;
     int randDest, counter;
     public NavMeshAgent agent;
+    Animator anim; //NEW
 
     [Header("AI Vision")]
     public float viewRadius;
@@ -34,10 +36,12 @@ public class EnemyAI : MonoBehaviour
         uiManager = FindFirstObjectByType<UIManager>();
         uiManagerMain = FindFirstObjectByType<UIManagerMain>();
 
+        anim = GetComponentInChildren<Animator>(); //NEW
+        agent = GetComponent<NavMeshAgent>();       //NEW
+
         gameManagerScript = GameManager.instance;
 
         Debug.Log("4. ENEMY SCRIPT STARTING. TimeScale on load is: " + Time.timeScale);
-        agent = GetComponent<NavMeshAgent>();
 
         counter = 1;
         randDest = Random.Range(0, destinations.Count);
@@ -51,6 +55,9 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        float speed = agent.velocity.magnitude; //NEW
+        anim.SetFloat("Speed", speed); //NEW
+
         float distance = Vector3.Distance(player.position, agent.transform.position);
         // Player caught, death
         if (distance <= catchDistance)
@@ -165,6 +172,8 @@ public class EnemyAI : MonoBehaviour
                     StartCoroutine(StayIdle());
                 }
             }
+
+        
     }
     IEnumerator StayIdle()
     {
