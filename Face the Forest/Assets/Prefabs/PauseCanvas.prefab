@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivitySlider: {fileID: 5295155888097175119}
   volumeSlider: {fileID: 5483389012755304425}
+  playerCam: {fileID: 0}
 --- !u!1 &780820570523630006
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,10 +271,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 8012952547868135363}
   m_HandleRect: {fileID: 6230509410271852798}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 1
+  m_MaxValue: 150
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

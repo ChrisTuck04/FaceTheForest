@@ -55,6 +55,7 @@ public class PauseManager : MonoBehaviour
 
     public void Resume()
     {
+        CloseSettings();
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;

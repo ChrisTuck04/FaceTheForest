@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class EnemyAI : MonoBehaviour
 {
     public GameManager gameManagerScript;
@@ -19,6 +20,7 @@ public class EnemyAI : MonoBehaviour
     Vector3 dest;
     int randDest, counter;
     public NavMeshAgent agent;
+    Animator anim; //NEW
 
     [Header("AI Vision")]
     public float viewRadius;
@@ -49,6 +51,11 @@ public class EnemyAI : MonoBehaviour
     private AudioClip footstepClip;
     private AudioClip screamClip;
     private bool isDead = false;
+    [Header("Attack Settings")]
+    public float attackDistance = 2f;
+    public float attackCooldown = 2f;
+    float lastAttackTime = 0f;
+
 
     private UIManager uiManager;
     private UIManagerMain uiManagerMain;
@@ -58,10 +65,12 @@ public class EnemyAI : MonoBehaviour
         uiManager = FindFirstObjectByType<UIManager>();
         uiManagerMain = FindFirstObjectByType<UIManagerMain>();
 
+        anim = GetComponentInChildren<Animator>(); 
+        agent = GetComponent<NavMeshAgent>();      
+
         gameManagerScript = GameManager.instance;
 
         Debug.Log("4. ENEMY SCRIPT STARTING. TimeScale on load is: " + Time.timeScale);
-        agent = GetComponent<NavMeshAgent>();
 
         counter = 1;
         randDest = Random.Range(0, destinations.Count);
@@ -184,6 +193,20 @@ public class EnemyAI : MonoBehaviour
         // Handle monster audio
         HandleMonsterAudio();
         
+        float speed = agent.velocity.magnitude; 
+        anim.SetFloat("Speed", speed); 
+
+        float distance = Vector3.Distance(player.position, agent.transform.position);
+        if (chasing && distance <= attackDistance && Time.time > lastAttackTime + attackCooldown)
+        {
+            agent.isStopped = true;
+            agent.updateRotation = false;
+            anim.SetTrigger("Attack");
+            lastAttackTime = Time.time;
+
+            StartCoroutine(ResumeAfterAttack());
+        }
+
         // Player caught, death
         if (distance <= catchDistance)
         {
@@ -309,6 +332,8 @@ public class EnemyAI : MonoBehaviour
                 StartCoroutine(StayIdle());
             }
         }
+
+        
     }
 
     void HandleMonsterAudio()
@@ -468,4 +493,14 @@ public class EnemyAI : MonoBehaviour
 
         return false;
     }
+
+    IEnumerator ResumeAfterAttack()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        agent.isStopped = false;
+        agent.updateRotation = true;
+    } 
+
+
 }

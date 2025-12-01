@@ -5,16 +5,19 @@ using System.Collections;
 public class UIManagerMain : MonoBehaviour
 {
     public GameObject deathScreenUI;
-    
+
     [Header("Death Screen Audio")]
     private AudioSource deathMusicSource;
     private AudioClip deathMusicClip;
     private AudioSource buttonAudioSource;
     private AudioClip buttonClickClip;
 
+    private NarratorManager narrator;    // <-- field, not inside Start
+
     private void Start()
     {
         SetupDeathAudio();
+        narrator = FindFirstObjectByType<NarratorManager>();
     }
 
     private void SetupDeathAudio()
@@ -29,7 +32,7 @@ public class UIManagerMain : MonoBehaviour
 
         // Load death music
         deathMusicClip = Resources.Load<AudioClip>("Audio/Monster/MX/Ambience/CoF");
-        
+
         if (deathMusicClip != null)
         {
             Debug.Log("Death music loaded successfully!");
@@ -45,7 +48,7 @@ public class UIManagerMain : MonoBehaviour
         buttonAudioSource.volume = 0.7f;
 
         buttonClickClip = Resources.Load<AudioClip>("Audio/Monster/Menu/Menu_Buttons_1");
-        
+
         if (buttonClickClip == null)
         {
             Debug.LogError("Button click sound not found!");
@@ -57,6 +60,8 @@ public class UIManagerMain : MonoBehaviour
         if (deathScreenUI != null)
         {
             deathScreenUI.SetActive(true);
+
+            if (narrator != null) narrator.SilenceNarrator();
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
