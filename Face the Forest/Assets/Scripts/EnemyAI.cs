@@ -52,7 +52,7 @@ public class EnemyAI : MonoBehaviour
     private AudioClip screamClip;
     private bool isDead = false;
     [Header("Attack Settings")]
-    public float attackDistance = 2f;
+    public float attackDistance = 3.5f;
     public float attackCooldown = 2f;
     float lastAttackTime = 0f;
 
@@ -196,7 +196,8 @@ public class EnemyAI : MonoBehaviour
         float speed = agent.velocity.magnitude; 
         anim.SetFloat("Speed", speed); 
 
-        //float distance = Vector3.Distance(player.position, agent.transform.position);
+        anim.SetBool("isChasing", chasing);
+
         if (chasing && distance <= attackDistance && Time.time > lastAttackTime + attackCooldown)
         {
             agent.isStopped = true;
