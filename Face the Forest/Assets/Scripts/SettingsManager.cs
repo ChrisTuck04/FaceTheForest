@@ -13,6 +13,8 @@ public class SettingsManager : MonoBehaviour
     [Header("Button Audio")]
     private AudioSource buttonAudioSource;
     private AudioClip buttonClickClip;
+    
+    [Header("Player Camera")]
     public PlayerCam playerCam;
 
     private const string SensitivityKey = "mouse_sensitivity";
@@ -20,16 +22,35 @@ public class SettingsManager : MonoBehaviour
 
     private void Start()
     {
+        // Auto-find PlayerCam if not assigned
+        if (playerCam == null)
+        {
+            playerCam = FindObjectOfType<PlayerCam>();
+            if (playerCam == null)
+            {
+                Debug.LogError("PlayerCam script not found in scene!");
+            }
+            else
+            {
+                Debug.Log("PlayerCam automatically found and assigned!");
+            }
+        }
+
         SetupButtonAudio();
         LoadSettings();
 
         // Listen for when user finishes dragging sliders (on pointer up)
-        sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
-        volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+            AddSliderEndDragEvent(sensitivitySlider);
+        }
         
-        // Add event triggers for when dragging ends
-        AddSliderEndDragEvent(sensitivitySlider);
-        AddSliderEndDragEvent(volumeSlider);
+        if (volumeSlider != null)
+        {
+            volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+            AddSliderEndDragEvent(volumeSlider);
+        }
     }
 
     private void SetupButtonAudio()
@@ -86,13 +107,24 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat(SensitivityKey, value);
         PlayerPrefs.Save();
 
-        playerCam.sensX = value;
-        playerCam.sensY = value;
+        if (playerCam != null)
+        {
+            playerCam.sensX = value;
+            playerCam.sensY = value;
+        }
     }
 
     private void OnVolumeChanged(float value)
     {
         AudioListener.volume = value;
+        
+        // Also update ForestAmbience if it exists
+        ForestAmbience forestAmbience = FindObjectOfType<ForestAmbience>();
+        if (forestAmbience != null)
+        {
+            forestAmbience.SetVolume(value);
+        }
+        
         PlayerPrefs.SetFloat(VolumeKey, value);
         PlayerPrefs.Save();
     }
@@ -102,14 +134,33 @@ public class SettingsManager : MonoBehaviour
         float sensitivity = PlayerPrefs.GetFloat(SensitivityKey, 100f);
         float volume = PlayerPrefs.GetFloat(VolumeKey, 1.0f);
 
-        sensitivitySlider.value = sensitivity;
-        volumeSlider.value = volume;
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.value = sensitivity;
+        }
+        else
+        {
+            Debug.LogError("Sensitivity Slider is not assigned in SettingsManager!");
+        }
 
-        sensitivitySlider.value = sensitivity;
-        volumeSlider.value = volume;
+        if (volumeSlider != null)
+        {
+            volumeSlider.value = volume;
+        }
+        else
+        {
+            Debug.LogError("Volume Slider is not assigned in SettingsManager!");
+        }
 
-        playerCam.sensX = sensitivity;
-        playerCam.sensY = sensitivity;
+        if (playerCam != null)
+        {
+            playerCam.sensX = sensitivity;
+            playerCam.sensY = sensitivity;
+        }
+        else
+        {
+            Debug.LogError("PlayerCam is not assigned in SettingsManager!");
+        }
 
         AudioListener.volume = volume;
     }
