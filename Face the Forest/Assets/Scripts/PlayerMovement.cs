@@ -94,14 +94,14 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKey(jumpKey) && readyToJump && grounded)
-        {
-            readyToJump = false;
+        // if (Input.GetKey(jumpKey) && readyToJump && grounded)
+        // {
+        //     readyToJump = false;
 
-            Jump();
+        //     Jump();
 
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+        //     Invoke(nameof(ResetJump), jumpCooldown);
+        // }
 
         if (Input.GetKeyDown(crouchKey) && grounded)
         {
@@ -159,22 +159,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Jump()
-    {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+    // private void Jump()
+    // {
+    //     rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    //     rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
-        if (playerAudio != null)
-        {
-            playerAudio.PlayJumpSound();
-        }
-    }
+    //     if (playerAudio != null)
+    //     {
+    //         playerAudio.PlayJumpSound();
+    //     }
+    // }
 
-    private void ResetJump()
-    {
-        readyToJump = true;
-    }
+    // private void ResetJump()
+    // {
+    //     readyToJump = true;
+    // }
 
     public void Die()
     {
