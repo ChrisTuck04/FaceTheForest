@@ -9,5 +9,7 @@ public class ReadableItem : MonoBehaviour
     {
         ReadableUI.Instance.Show(textToRead);
         gameObject.SetActive(false);
+
+        this.enabled = false;
     }
 }
