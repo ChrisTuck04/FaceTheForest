@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     public float currentStamina;
     public float staminaDrainRate = 30f;
     public float staminaRegenRate = 15f;
+    float staminaRegenTimer = 0f; 
+    float staminaRegenDelay = 1.0f;
 
     [Header("Jumping")]
     public float jumpForce;
@@ -112,27 +114,34 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HandleStamina()
-    {
-        bool isMoving = horizontalInput != 0 || verticalInput != 0;
-        bool wantsToSprint = Input.GetKey(sprintKey);
+private void HandleStamina()
+{
+    bool isMoving = horizontalInput != 0 || verticalInput != 0;
+    bool wantsToSprint = Input.GetKey(sprintKey);
 
-        if (wantsToSprint && isMoving && currentStamina > 0 && !isCrouching)
+    if (wantsToSprint && isMoving && currentStamina > 0 && !isCrouching)
+    {
+        isSprinting = true;
+        currentStamina -= staminaDrainRate * Time.deltaTime;
+        currentStamina = Mathf.Max(currentStamina, 0);
+
+        staminaRegenTimer = 0f;
+    }
+    else
+    {
+        isSprinting = false;
+
+        if (staminaRegenTimer < staminaRegenDelay)
         {
-            isSprinting = true;
-            currentStamina -= staminaDrainRate * Time.deltaTime;
-            currentStamina = Mathf.Max(currentStamina, 0);
+            staminaRegenTimer += Time.deltaTime;
         }
-        else
-        {
-            isSprinting = false;
-            if (currentStamina < maxStamina)
+        else if (currentStamina < maxStamina)
             {
                 currentStamina += staminaRegenRate * Time.deltaTime;
                 currentStamina = Mathf.Min(currentStamina, maxStamina);
             }
-        }
     }
+}
 
     private void MovePlayer()
     {
