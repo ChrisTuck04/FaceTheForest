@@ -30,13 +30,15 @@ public class NarratorManager : MonoBehaviour
     public AudioClip[] panicGoLeft;
     public AudioClip[] panicGoRight;
     public AudioClip[] panicGoForward;
-    public AudioClip[] panicRun;
-    public AudioClip[] monsterBehind;
+    public AudioClip[] panicGeneral;
 
     [Header("Audio Clips - Tutorial Event")]
     public AudioClip[] tutorialIntros;       // "Watch out! The trees are moving!"
     public AudioClip[] tutorialTrapReaction; // "Wait! The path... it moved!", "We are trapped."
     public AudioClip[] tutorialPathClear;    // "Okay, it's clear now. Move quickly."
+
+    [Header("Audio Clips - Other")]
+    public AudioClip[] mazeChange; // "The maze is changing..."
 
     UnityEngine.AI.NavMeshPath path;
     float calmTimer;
@@ -84,13 +86,10 @@ public class NarratorManager : MonoBehaviour
 
     IEnumerator ChaseSequence()
     {
-        bool isBehind = CheckIfMonsterBehind();
-
-        //behind player warning chance
-        if (isBehind && Random.value < warningChance)
+        
+        if (Random.value < warningChance)
         {
-            Debug.Log("Rand1");
-            PlayClip(monsterBehind);
+            PlayClip(panicGeneral);
 
             float waitTime = delayAfterWarning;
             if (audioSource.clip != null)
@@ -100,20 +99,7 @@ public class NarratorManager : MonoBehaviour
 
             yield return new WaitForSeconds(waitTime);
         }
-        else if (!isBehind && Random.value < warningChance)
-        {
-            Debug.Log("Rand2");
-            PlayClip(panicRun);
-
-            float waitTime = delayAfterWarning;
-            if (audioSource.clip != null)
-            {
-                waitTime += audioSource.clip.length;
-            }
-
-            yield return new WaitForSeconds(waitTime);
-        }
-        //direction guidance, panic
+        
         PlayDirectionalGuidance(isPanic: true);
     }
 
@@ -130,14 +116,7 @@ public class NarratorManager : MonoBehaviour
         PlayDirectionalGuidance(isPanic: false);
     }
 
-    bool CheckIfMonsterBehind()
-    {
-        if (enemyScript == null) return false;
-        Vector3 relativePos = player.InverseTransformPoint(enemyScript.transform.position);
-        return relativePos.z < 0;
-    }
-
-    void PlayClip(AudioClip[] clipArray)
+    public void PlayClip(AudioClip[] clipArray)
     {
         if (clipArray == null || clipArray.Length == 0) return;
         int index = Random.Range(0, clipArray.Length);
@@ -190,6 +169,14 @@ public class NarratorManager : MonoBehaviour
         if (angle < -25) PlayClip(isPanic ? panicGoLeft : calmGoLeft);
         else if (angle > 25) PlayClip(isPanic ? panicGoRight : calmGoRight);
         else PlayClip(isPanic ? panicGoForward : calmGoForward);
+    }
+
+    public void ReactToMapChange()
+    {
+        if (enemyScript.chasing || audioSource.isPlaying) return;
+
+        PlayClip(mazeChange);
+        calmTimer = talkInterval + Random.Range(-2f, 2f);
     }
 
     public void SilenceNarrator()
