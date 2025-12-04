@@ -2,27 +2,29 @@ using UnityEngine;
 
 public class HidePlayer : MonoBehaviour
 {
-    //public GameObject hidingText;
-    //public enemyAI monsterScript;
-
     GameManager gameManager;
-
-    public PlayerMovement pmScript;
+    
+    // We don't need to cache pmScript in Start because we get it from the Collider now
+    // This ensures we always get the LIVE player, not the dead one.
 
     private void Start()
     {
         gameManager = GameManager.instance;
-        if (pmScript == null)
-        {
-            pmScript = FindFirstObjectByType<PlayerMovement>();
-        }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            gameManager.PlayerEnterHiding();
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+            
+            if (player != null)
+            {
+                player.FlipHindered();
+                player.MovementHandling();
+            }
+
+            if (gameManager != null) gameManager.PlayerEnterHiding();
         }
     }
 
@@ -30,7 +32,15 @@ public class HidePlayer : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            gameManager.PlayerExitHiding();
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+            
+            if (player != null)
+            {
+                player.FlipHindered();
+                player.MovementHandling(); 
+            }
+
+            if (gameManager != null) gameManager.PlayerExitHiding();
         }
     }
 }
