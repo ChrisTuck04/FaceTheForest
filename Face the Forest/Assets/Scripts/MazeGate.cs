@@ -33,11 +33,22 @@ public class MazeGate : MonoBehaviour
 
     public void SetGateState(bool shouldBlock)
     {
-        // 1. Logic: Toggle Obstacle immediately
+        if (obstacle == null) 
+        {
+            obstacle = GetComponent<NavMeshObstacle>();
+        }
+        // -----------------------------
+
         obstacle.enabled = shouldBlock;
 
-        // 2. Visuals: Set target for Update() to move towards
         float targetY = shouldBlock ? visibleHeight : hiddenHeight;
         targetLocalPos = new Vector3(visualModel.localPosition.x, targetY, visualModel.localPosition.z);
+        
+        // If we are in the Editor (not playing), we must force the transform update immediately
+        // because Update() isn't running to do the smooth Lerp.
+        if (!Application.isPlaying)
+        {
+            visualModel.localPosition = targetLocalPos;
+        }
     }
 }
