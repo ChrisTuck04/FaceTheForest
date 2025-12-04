@@ -11,11 +11,17 @@ public class ForestAmbience : MonoBehaviour
     [SerializeField] private float maxDelay = 8f;
     
     private AudioSource[] audioSources;
+    private float masterVolume = 1f;
     
     private void Start()
     {
         LoadAmbienceClips();
         SetupAudioSources();
+        
+        // Load saved volume
+        masterVolume = PlayerPrefs.GetFloat("master_volume", 1.0f);
+        ApplyVolume();
+        
         PlayAllLayers();
     }
     
@@ -40,7 +46,7 @@ public class ForestAmbience : MonoBehaviour
             audioSources[i].loop = true;
             audioSources[i].playOnAwake = false;
             audioSources[i].spatialBlend = 0f;
-            audioSources[i].volume = clipVolumes[i];
+            audioSources[i].volume = clipVolumes[i] * masterVolume;
         }
     }
     
@@ -50,6 +56,26 @@ public class ForestAmbience : MonoBehaviour
         {
             float delay = Random.Range(minDelay, maxDelay);
             audioSources[i].PlayDelayed(delay);
+        }
+    }
+    
+    // Called by SettingsManager when volume changes
+    public void SetVolume(float volume)
+    {
+        masterVolume = volume;
+        ApplyVolume();
+    }
+    
+    private void ApplyVolume()
+    {
+        if (audioSources == null) return;
+        
+        for (int i = 0; i < audioSources.Length; i++)
+        {
+            if (audioSources[i] != null)
+            {
+                audioSources[i].volume = clipVolumes[i] * masterVolume;
+            }
         }
     }
 }

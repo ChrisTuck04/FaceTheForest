@@ -11,6 +11,9 @@ public class PlayerAudio : MonoBehaviour
     [SerializeField] private float footstepVolume = 0.7f;
     [SerializeField] private float jumpVolume = 0.6f;
     [SerializeField] private float landVolume = 0.8f;
+    
+    [Header("Voice Settings")]
+    [SerializeField] private float basePitch = 1.5f; // Higher pitch for child voice (1.5-2.0 range)
 
     private AudioSource audioSource;
     private AudioClip[] walkingSounds;
@@ -30,7 +33,6 @@ public class PlayerAudio : MonoBehaviour
 
     private void LoadAudioFiles()
     {
-        
         walkingSounds = Resources.LoadAll<AudioClip>("Audio/Player/Movement/Steps/Single");
         runningSounds = Resources.LoadAll<AudioClip>("Audio/Player/Movement/Steps/Single");
         jumpSounds = Resources.LoadAll<AudioClip>("Audio/Player/Movement/Jump");
@@ -40,7 +42,6 @@ public class PlayerAudio : MonoBehaviour
         Debug.Log($"Loaded {runningSounds.Length} running sounds");
         Debug.Log($"Loaded {jumpSounds.Length} jump sounds");
         Debug.Log($"Loaded {landSounds.Length} land sounds");
-
     }
 
     private void Start()
@@ -112,7 +113,8 @@ public class PlayerAudio : MonoBehaviour
             return;
 
         float randomVolume = volume + Random.Range(-volumeVariation, volumeVariation);
-        float randomPitch = 1f + Random.Range(-pitchVariation, pitchVariation);
+        // Apply base pitch (for child voice) plus random variation
+        float randomPitch = basePitch + Random.Range(-pitchVariation, pitchVariation);
 
         audioSource.pitch = randomPitch;
         audioSource.PlayOneShot(clip, Mathf.Clamp01(randomVolume));
