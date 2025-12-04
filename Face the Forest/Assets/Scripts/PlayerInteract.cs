@@ -8,8 +8,8 @@ public class PlayerInteract : MonoBehaviour
     {
         if (itemInRange != null && Input.GetKeyDown(KeyCode.E))
         {
-
             itemInRange.Interact();
+            itemInRange = null;
         }
     }
 

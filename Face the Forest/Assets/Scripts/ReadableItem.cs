@@ -10,6 +10,7 @@ public class ReadableItem : MonoBehaviour
         ReadableUI.Instance.Show(textToRead);
         gameObject.SetActive(false);
 
+        // GetComponent<Collider>().enabled = false;
         this.enabled = false;
     }
 }
